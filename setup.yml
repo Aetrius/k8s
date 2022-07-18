@@ -25,11 +25,13 @@
     command: sudo hostnamectl set-hostname {{ inventory_hostname }}
     tags: hostname
 
-  - name: configure the login banner
-    net_banner:
-      banner: login
-      text: |
-        this is my login banner
-        that contains a multiline
-        string
-      state: present
+  - name: distribute the /etc/motd file
+    template:
+      src: motd.j2
+      dest: /etc/motd
+      owner: root
+      group: root
+      mode: 0644
+    tags:
+      - motd_config
+    changed_when: true
