@@ -1,0 +1,26 @@
+- name: Updates
+  hosts: "{{ target }}"
+  become: true
+ 
+  tasks:
+  - name: Copy the template ansible-config.yaml over
+    template:
+      src: ansible-config.yaml.ubuntu.j2
+      dest: /etc/netplan/01-ansible-config.yaml
+      owner: root
+      group: root
+      mode: 0644
+      backup: yes
+
+  - name: Remove existing netplan
+    command: rm /etc/netplan/00-installer-config.yaml
+    ignore_errors: true
+
+  - name: Apply netplan
+    command: sudo netplan apply
+    async: 45
+    poll: 0
+
+  - name: Set hostname
+    command: sudo hostnamectl set-hostname {{ inventory_hostname }}
+    tags: hostname

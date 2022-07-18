@@ -1,0 +1,4 @@
+---
+
+  - include_vars: setup.yml
+  - include_vars: docker.yml

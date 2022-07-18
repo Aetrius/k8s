@@ -1,0 +1,24 @@
+---
+all: # keys must be unique, i.e. only one 'hosts' per group
+    children:   # key order does not matter, indentation does
+        prox-hosts:
+            children:
+                prox-group:
+                    hosts:
+                        prox-aether01:
+                            ansible_host: 192.168.1.27
+                            ansible_os: ubuntu
+                prox-k3s:
+                    hosts:
+                        k8s-control:
+                            ansible_host: 192.168.1.30
+                        k8s-worker1:
+                            ansible_host: 192.168.1.31
+                        k8s-worker2:
+                            ansible_host: 192.168.1.32
+                        k8s-worker3:
+                            ansible_host: 192.168.1.33
+                            
+                        # example-host:
+                        #     ansible_host: 0.0.0.0
+                        #     ansible_os: ubuntu

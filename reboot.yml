@@ -1,0 +1,8 @@
+---
+- name: Updates
+  hosts: all
+  become: yes
+ 
+  tasks:
+  - name: Unconditionally reboot the machine with all defaults
+    ansible.builtin.reboot:
