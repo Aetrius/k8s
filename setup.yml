@@ -24,3 +24,12 @@
   - name: Set hostname
     command: sudo hostnamectl set-hostname {{ inventory_hostname }}
     tags: hostname
+
+  - name: configure the login banner
+    net_banner:
+      banner: login
+      text: |
+        this is my login banner
+        that contains a multiline
+        string
+      state: present

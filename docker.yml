@@ -1,0 +1,70 @@
+---
+- name: Docker
+  hosts: "{{ target }}"
+  become: yes
+ 
+  tasks:
+
+  - name: Install docker packages
+    package:
+      name: "{{ item }}"
+      state: present
+      update_cache: yes
+    with_items:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+    tags:
+      - docker
+
+  - name: Add Docker s official GPG key
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+    tags:
+      - docker
+
+  - name: Verify that we have the key with the fingerprint
+    apt_key:
+      id: 0EBFCD88
+      state: present
+    tags:
+      - docker
+
+  - name: Set up the stable repository
+    apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
+      state: present
+      update_cache: yes
+    tags:
+      - docker
+
+  - name: Update apt packages
+    package:
+      update_cache: yes
+    tags:
+      - docker
+
+  - name: Install docker
+    package:
+      name: docker-ce
+      state: present
+      update_cache: yes
+    #notify: Start docker on boot
+    tags:
+      - docker
+
+  - name: Install docker-compose
+    get_url: 
+      url : https://github.com/docker/compose/releases/download/1.25.1-rc1/docker-compose-Linux-x86_64
+      dest: /usr/local/bin/docker-compose
+      mode: 'u+x,g+x'
+  
+  - name: Check is docker-compose installed
+    shell: command -v docker-compose >/dev/null 2>&1
+    register: is_docker_compose_install
+    ignore_errors: yes
+  
+  - debug: msg="{{ is_docker_compose_install.rc }}" # it returns rc 0 if installed or 127 if not
+  - debug: var=is_docker_compose_install

@@ -16,6 +16,11 @@ all: # keys must be unique, i.e. only one 'hosts' per group
                     hosts:
                         k8s-control:
                             ansible_host: 192.168.1.30
+                            
+                prox-monitoring:
+                    hosts:
+                        garmin-01:
+                            ansible_host: 192.168.1.34
 
                         # example-host:
                         #     ansible_host: 0.0.0.0
