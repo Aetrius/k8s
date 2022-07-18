@@ -23,21 +23,6 @@
   - name: container config
     shell: sudo containerd config default | sudo tee /etc/containerd/config.toml
 
-  # - name: Create the file if it does not exist
-  #   ansible.builtin.file:
-  #     path: /etc/containerd/config.toml
-  #     state: touch
-  #     mode: u=rw,g=r,o=r
-
-  # - name: Add the container d files
-  #   lineinfile:
-  #     dest: /etc/containerd/config.toml
-  #     regexp: '.*{{ item }}$'
-  #     line: "{{ item }}"
-  #     state: present
-  #   loop:
-  #     - sudo containerd config default
-
   - name: restart containerd
     shell: sudo systemctl restart containerd
 
