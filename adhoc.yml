@@ -1,0 +1,12 @@
+---
+- name: join
+  hosts: "{{ target }}"
+  become: true
+ 
+  tasks:
+  - name: reset kubeadm
+    shell: sudo kubeadm reset -f
+    
+  - name: join the nodes to the master
+    shell: sudo kubeadm join 192.168.1.30:6443 --token 9pjqsx.1ve41eqqnrzoo851 --discovery-token-ca-cert-hash sha256:4150e362c954cd06dcc6f7a4294bd36cf7aac9b8c874b5d7039beb9e40bc979a
+    with_items: "{{ groups['prox-k3s-workers'] }}"

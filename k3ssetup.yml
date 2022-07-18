@@ -11,4 +11,46 @@
       line: "{{ hostvars[item].ansible_host }} {{item}}"
       state: present
     when: hostvars[item].ansible_host is defined
-    with_items: "{{ groups['prox-k3s'] }}"
+    with_items: "{{ groups['prox-hosts'] }}"
+
+  - name: Create the file if it does not exist
+    ansible.builtin.file:
+      path: /etc/modules-load.d/containerd.conf
+      state: touch
+      mode: u=rw,g=r,o=r
+
+  - name: Add the container d files
+    lineinfile:
+      dest: /etc/modules-load.d/containerd.conf
+      regexp: '.*{{ item }}$'
+      line: "{{ item }}"
+      state: present
+    loop:
+      - overlay
+      - br_netfilter
+
+  - name: modprobe
+    shell: sudo modprobe {{ item }}
+    loop:
+      - overlay
+      - br_netfilter
+
+  - name: Create the file if it does not exist
+    ansible.builtin.file:
+      path: /etc/sysctl.d/99-kubernetes-cri.conf
+      state: touch
+      mode: u=rw,g=r,o=r
+
+  - name: Add the kubernetes networking file
+    lineinfile:
+      dest: /etc/sysctl.d/99-kubernetes-cri.conf
+      regexp: '.*{{ item }}$'
+      line: "{{ item }}"
+      state: present
+    loop:
+      - net.bride.bride-nf-call-iptables  = 1
+      - net.ipv4.ip_forward               = 1
+      - net.bride.bride-nf-call-ip6tables = 1
+
+  - name: restart sysctl
+    shell: sudo sysctl --system

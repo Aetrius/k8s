@@ -1,0 +1,47 @@
+---
+- name: kubecommands
+  hosts: "{{ target }}"
+  become: true
+ 
+  tasks:
+  - name: Update the apt packages
+    ansible.builtin.apt:
+      name: "*"
+      state: latest
+
+  - name: Install containerd from apt
+    ansible.builtin.apt:
+      pkg:
+      - apt-transport-https
+      - curl
+
+  - name: add google apt key
+    shell: curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+
+  
+  - name: Create the file if it does not exist
+    ansible.builtin.file:
+      path: /etc/apt/sources.list.d/kubernetes.list
+      state: touch
+      mode: u=rw,g=r,o=r
+
+  - name: Add the container d files
+    lineinfile:
+      dest: /etc/apt/sources.list.d/kubernetes.list
+      regexp: '.*{{ item }}$'
+      line: "{{ item }}"
+      state: present
+    loop:
+      - deb https://apt.kubernetes.io/ kubernetes-xenial main
+
+  - name: "Update Repository cache"
+    apt:
+      update_cache: true
+      cache_valid_time: 3600
+      force_apt_get: true
+
+  - name: Install kubelet commands
+    shell: sudo apt-get install -y kubelet=1.23.0-00 kubeadm=1.23.0-00 kubectl=1.23.0-00
+
+  - name: Install apt-mark
+    shell: sudo apt-mark hold kubelet kubeadm kubectl
