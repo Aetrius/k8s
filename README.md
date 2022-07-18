@@ -1,4 +1,4 @@
-Ansible Managed K3s - by Tyler Bennet
+Ansible Managed K8s - by Tyler Bennet
 =============
 
 
