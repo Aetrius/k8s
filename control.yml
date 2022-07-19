@@ -4,35 +4,42 @@
   become: true
  
   tasks:
+
+  - name: Disable memory swap
+    shell: sudo swapoff -a
+
   - name: setup kubeadm settings
     shell: sudo kubeadm init --pod-network-cidr 192.168.0.0/16 --kubernetes-version 1.23.0
     ignore_errors: true
 
   - name: Create the directory if it does not exist
     ansible.builtin.file:
-      path: /$HOME/.kube
+      path: /home/tadmin/.kube
       state: directory
-      mode: u=rw,g=r,o=r
+      mode: 0755
+    tags: kube
 
   - name: copy conf file
     ansible.builtin.copy: 
       src: /etc/kubernetes/admin.conf
-      dest: /$HOME/.kube/config
+      dest: /home/tadmin/.kube/config
       remote_src: yes
 
   - name: set params
-    shell: sudo chown $(id -u):$(id -g) /$HOME/.kube/config
+    shell: sudo chown $(id -u):$(id -g) /home/tadmin/.kube/config
 
   - name: calico network add-on
     shell: sudo kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
     ignore_errors: true
 
-  - name: kubectl join command
-    shell: sudo kubeadm token create --print-join-command
-    register: join_command
+  
 
-  - debug:
-      var: join_command.stdout_lines
+  # - name: kubectl join command
+  #   shell: sudo kubeadm token create --print-join-command
+  #   register: join_command
+
+  # - debug:
+  #     var: join_command.stdout_lines
 
   # - name: register worker nodes
   #   shell: join_command.stdout_lines

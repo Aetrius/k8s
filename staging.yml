@@ -1,4 +1,15 @@
 ---
+  - name: Include a play after another play
+    import_playbook: setup.yml
 
-  - include_vars: setup.yml
-  - include_vars: docker.yml
+  - name: Include a play after another play
+    import_playbook: k3ssetup.yml
+
+  - name: Include a play after another play
+    import_playbook: containerd.yml
+
+  - name: Include a play after another play
+    import_playbook: kubecommands.yml
+
+  - name: Include a play after another play
+    import_playbook: control.yml

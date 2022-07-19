@@ -23,7 +23,7 @@
     ansible.builtin.file:
       path: /etc/apt/sources.list.d/kubernetes.list
       state: touch
-      mode: u=rw,g=r,o=r
+      mode: 0755
 
   - name: Add the container d files
     lineinfile:

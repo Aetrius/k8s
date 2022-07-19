@@ -18,7 +18,7 @@
     ansible.builtin.file:
       path: /etc/containerd
       state: directory
-      mode: u=rw,g=r,o=r
+      mode: 0755
   
   - name: container config
     shell: sudo containerd config default | sudo tee /etc/containerd/config.toml

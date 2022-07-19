@@ -17,7 +17,7 @@
     ansible.builtin.file:
       path: /etc/modules-load.d/containerd.conf
       state: touch
-      mode: u=rw,g=r,o=r
+      mode: 0755
 
   - name: Add the container d files
     lineinfile:
@@ -39,7 +39,7 @@
     ansible.builtin.file:
       path: /etc/sysctl.d/99-kubernetes-cri.conf
       state: touch
-      mode: u=rw,g=r,o=r
+      mode: 0755
 
   - name: Add the kubernetes networking file
     lineinfile:

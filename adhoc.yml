@@ -8,5 +8,5 @@
     shell: sudo kubeadm reset -f
     
   - name: join the nodes to the master
-    shell: command-here
+    shell: kubeadm join 192.168.1.35:6443 --token zaldnx.hlw5oekz2sp8ls1i --discovery-token-ca-cert-hash sha256:73172a902a1e5aed778980a9e92d57e2d5662ff4a19e4fb380369b92ae36d437
     with_items: "{{ groups['prox-k3s-workers'] }}"
