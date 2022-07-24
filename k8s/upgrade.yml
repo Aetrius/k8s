@@ -1,0 +1,22 @@
+---
+- name: Upgrade K8s
+  hosts: "{{ target }}"
+  become: true
+ 
+  tasks:
+
+  - name: Drain k8s control nodes
+    shell: kubectl drain {{ item }} --ignore-daemonsets
+    with_items: "{{ groups['prox-k8s-control'] }}"
+
+  - name: Upgrade Held Kubeadm
+    shell: sudo apt-get update && sudo apt-get install -y --allow-change-held-packages kubeadm=1.24.3-00
+    with_items: "{{ groups['prox-k8s-control'] }}"
+
+  - name: Upgrade plan
+    shell: sudo kubeadm upgrade plan v1.24.3
+    with_items: "{{ groups['prox-k8s-control'] }}"
+
+  - name: Upgrade plan
+    shell: sudo kubeadm upgrade apply v1.24.3
+    with_items: "{{ groups['prox-k8s-control'] }}"

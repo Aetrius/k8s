@@ -1,0 +1,8 @@
+---
+- name: control plane setup
+  hosts: "{{ target }}"
+  become: true
+
+  tasks:
+  #- include_tasks: ../setup.yml
+  #- include_tasks: installer.yml

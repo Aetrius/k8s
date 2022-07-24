@@ -1,0 +1,60 @@
+---
+- name: control plane setup
+  hosts: "{{ target }}"
+  become: true
+ 
+  tasks:
+
+  - name: Update the apt packages
+    ansible.builtin.apt:
+      name: "*"
+      state: latest
+
+  - name: Install Docker
+    ansible.builtin.apt:
+      name: "docker.io"
+      state: latest
+  
+  - name: Make sure docker service is running
+    ansible.builtin.systemd:
+      state: started
+      name: docker
+  
+  - name: Enable service docker
+    ansible.builtin.systemd:
+      name: docker
+      enabled: yes
+  
+  - name: Update the apt packages
+    ansible.builtin.apt:
+      name:
+        - apt-transport-https
+        - curl
+      state: latest
+
+  - name: Add an Apt signing key, uses whichever key is at the URL
+    ansible.builtin.apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present
+
+  - name: Add source repository into sources list
+    ansible.builtin.apt_repository:
+      repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+      state: present
+  
+  - name: Update the apt packages
+    ansible.builtin.apt:
+      name:
+        - kubeadm
+        - kubelet
+        - kubectl
+        - kubernetes-cni
+      state: latest
+
+  - name: disable swap
+    shell: sudo swapoff -a
+  
+  - name: disable swap 2
+    shell: sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+  
+  
