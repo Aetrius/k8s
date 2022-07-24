@@ -1,6 +1,6 @@
 ---
 - name: control plane setup
-  hosts: "{{ target }}"
+  hosts: all
   become: true
  
   tasks:
@@ -51,10 +51,26 @@
         - kubernetes-cni
       state: latest
 
-  - name: disable swap
-    shell: sudo swapoff -a
-  
-  - name: disable swap 2
-    shell: sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
-  
-  
+  - name: find fstab
+    lineinfile: 
+      dest: /etc/fstab
+      line: "/swap.img"
+      regexp: '([#].*?\sswap\s+sw\s+.*)$'
+      state: present
+    check_mode: yes
+    register: swap
+
+  - name: Disable SWAP since kubernetes can't work with swap enabled (1/2)
+    shell: |
+      swapoff -a
+    when: swap == 0
+
+  - name: Remove Swap
+    shell: sudo rm /swap.img
+
+  - name: Disable SWAP in fstab since kubernetes can't work with swap enabled (2/2)
+    replace:
+      path: /etc/fstab
+      regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+      replace: '# \1'
+    when: swap == 0

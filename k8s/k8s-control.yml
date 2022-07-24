@@ -1,0 +1,36 @@
+---
+- name: K8s Controller
+  hosts: prox-k8s-control:!~prox-k8s-workers
+  become: true
+ 
+  tasks:
+  # /etc/kubernetes/manifests/kube-controller-manager.yaml
+
+  - name: Task name
+    stat:
+      path: /etc/kubernetes/manifests/kube-controller-manager.yaml
+    register: kubecontroller
+
+  - name: Initialize kubeadm
+    shell: sudo kubeadm init
+    #with_items: "{{ groups['prox-k8s-control'] }}"
+    when: inventory_hostname in groups['prox-k8s-control'] and not kubecontroller.stat.exists
+
+  - name: Create a directory if it does not exist
+    ansible.builtin.file:
+      path: $HOME/.kube
+      state: directory
+      mode: '0755'
+      owner: "{{ ansible_user_id }}"
+      group: "{{ ansible_user_id }}"
+      #with_items: "{{ groups['prox-k8s-control'] }}"
+    when: inventory_hostname in groups['prox-k8s-control'] and not kubecontroller.stat.exists
+
+  - name: Copy the admin config to the .kube dir
+    ansible.builtin.copy:
+      src: /etc/kubernetes/admin.conf
+      dest: $HOME/.kube/config
+      owner: "{{ ansible_user_id }}"
+      group: "{{ ansible_user_id }}"
+      mode: '0644'
+    when: inventory_hostname in groups['prox-k8s-control'] and not kubecontroller.stat.exists

@@ -12,13 +12,11 @@ all: # keys must be unique, i.e. only one 'hosts' per group
                         k8s-worker3:
                             ansible_host: 192.168.1.46
                         k8s-worker4:
-                            ansible_host: 192.168.1.48
+                            ansible_host: 192.168.1.50
                 prox-k8s-control:
                     hosts:
                         k8s-control:
                             ansible_host: 192.168.1.43
-                        k8s-control02:
-                            ansible_host: 192.168.1.49
 
                         # example-host:
                         #     ansible_host: 0.0.0.0

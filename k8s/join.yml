@@ -1,0 +1,7 @@
+---
+- name: K8s Setup
+  hosts: "{{ target }}"
+  become: true
+
+- name: Join New Host
+  import_playbook: ../join-host.yml

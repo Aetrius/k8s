@@ -1,8 +1,14 @@
 - name: Updates
-  hosts: "{{ target }}"
+  hosts: all
   become: true
  
   tasks:
+
+  - name: Task name
+    stat:
+      path: /etc/netplan/01-ansible-config.yaml
+    register: netplan_configured
+
   - name: Copy the template ansible-config.yaml over
     template:
       src: ansible-config.yaml.ubuntu.j2
@@ -10,20 +16,23 @@
       owner: root
       group: root
       mode: 0644
-      backup: yes
+    when: not netplan_configured.stat.exists
 
   - name: Remove existing netplan
     command: rm /etc/netplan/00-installer-config.yaml
     ignore_errors: true
+    when: not netplan_configured.stat.exists
 
   - name: Apply netplan
     command: sudo netplan apply
     async: 45
     poll: 0
+    when: not netplan_configured.stat.exists
 
   - name: Set hostname
     command: sudo hostnamectl set-hostname {{ inventory_hostname }}
     tags: hostname
+    when: not netplan_configured.stat.exists
 
   - name: distribute the /etc/motd file
     template:
@@ -35,3 +44,4 @@
     tags:
       - motd_config
     changed_when: true
+    when: not netplan_configured.stat.exists

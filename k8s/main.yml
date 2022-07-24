@@ -1,8 +1,19 @@
 ---
-- name: control plane setup
+- name: K8s Setup
   hosts: "{{ target }}"
   become: true
 
-  tasks:
-  #- include_tasks: ../setup.yml
-  #- include_tasks: installer.yml
+- name: Setup Networking
+  import_playbook: ../setup.yml
+
+- name: Install k8s processes
+  import_playbook: installer.yml
+
+- name: Host Updates Adding hosts
+  import_playbook: ../host-updates.yml
+
+- name: Host Updates Adding hosts
+  import_playbook: k8s-control.yml
+
+- name: Host Updates Adding hosts
+  import_playbook: join-host.yml
