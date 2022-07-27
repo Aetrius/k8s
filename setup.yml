@@ -19,7 +19,7 @@
     when: not netplan_configured.stat.exists
 
   - name: Remove existing netplan
-    command: rm /etc/netplan/00-installer-config.yaml
+    command: rm /etc/netplan/00-ansible-config.yaml
     ignore_errors: true
     when: not netplan_configured.stat.exists
 

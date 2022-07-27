@@ -12,8 +12,11 @@
 - name: Host Updates Adding hosts
   import_playbook: ../host-updates.yml
 
-- name: Host Updates Adding hosts
-  import_playbook: k8s-control.yml
+- name: Configure K8s requirements
+  import_playbook: k8s-configure.yml
+
+# - name: Host Updates Adding hosts
+#   import_playbook: k8s-control.yml
 
 - name: Host Updates Adding hosts
   import_playbook: join-host.yml

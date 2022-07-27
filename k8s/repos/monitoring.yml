@@ -1,0 +1,29 @@
+---
+- name: control plane repos
+  hosts: "{{ target }}"
+  become: true
+ 
+  tasks:
+
+  - name: Add helm repo for prometheus
+    shell: helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+  - name: update helm repo
+    shell: helm repo update
+
+  - name: help template
+    shell: helm show values kehao95/prometheus-exporter > prom-exporter.yaml
+
+  - name: Copy the template prometheus-exporter.yml over
+      template:
+        src: ../../prometheus-exporter.yaml.ubuntu.j2
+        dest: /home/tadmin/prom-exporter.yaml
+        owner: tadmin
+        group: root
+        mode: 0644
+
+  - name: Install to monitoring namespace
+    shell: helm install -n monitoring my-exporter prometheus-exporter -f prom-exporter.yaml
+
+  - name: Upgrade chart
+    shell: helm upgrade -n monitoring my-exporter prometheus-exporter -f prom-exporter.yaml

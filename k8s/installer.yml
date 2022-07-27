@@ -10,46 +10,47 @@
       name: "*"
       state: latest
 
-  - name: Install Docker
-    ansible.builtin.apt:
-      name: "docker.io"
-      state: latest
+  # - name: Install Docker
+  #   ansible.builtin.apt:
+  #     name: "dockerd.io"
+  #     state: latest
   
-  - name: Make sure docker service is running
-    ansible.builtin.systemd:
-      state: started
-      name: docker
+  # - name: Make sure docker service is running
+  #   ansible.builtin.systemd:
+  #     state: started
+  #     name: docker
   
-  - name: Enable service docker
-    ansible.builtin.systemd:
-      name: docker
-      enabled: yes
+  # - name: Enable service docker
+  #   ansible.builtin.systemd:
+  #     name: docker
+  #     enabled: yes
   
-  - name: Update the apt packages
-    ansible.builtin.apt:
-      name:
-        - apt-transport-https
-        - curl
-      state: latest
+  # - name: Update the apt packages
+  #   ansible.builtin.apt:
+  #     name:
+  #       - apt-transport-https
+  #       - curl
+  #       - python3-pip
+  #     state: latest
 
-  - name: Add an Apt signing key, uses whichever key is at the URL
-    ansible.builtin.apt_key:
-      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-      state: present
+  # - name: Add an Apt signing key, uses whichever key is at the URL
+  #   ansible.builtin.apt_key:
+  #     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+  #     state: present
 
-  - name: Add source repository into sources list
-    ansible.builtin.apt_repository:
-      repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
-      state: present
+  # - name: Add source repository into sources list
+  #   ansible.builtin.apt_repository:
+  #     repo: "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+  #     state: present
   
-  - name: Update the apt packages
-    ansible.builtin.apt:
-      name:
-        - kubeadm
-        - kubelet
-        - kubectl
-        - kubernetes-cni
-      state: latest
+  # - name: Update the apt packages
+  #   ansible.builtin.apt:
+  #     name:
+  #       - kubeadm
+  #       - kubelet
+  #       - kubectl
+  #       - kubernetes-cni
+  #     state: latest
 
   - name: find fstab
     lineinfile: 
@@ -63,14 +64,9 @@
   - name: Disable SWAP since kubernetes can't work with swap enabled (1/2)
     shell: |
       swapoff -a
-    when: swap == 0
-
-  - name: Remove Swap
-    shell: sudo rm /swap.img
 
   - name: Disable SWAP in fstab since kubernetes can't work with swap enabled (2/2)
     replace:
       path: /etc/fstab
       regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
       replace: '# \1'
-    when: swap == 0

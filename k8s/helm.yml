@@ -1,0 +1,38 @@
+---
+- name: control plane setup
+  hosts: "{{ target }}"
+  become: true
+ 
+  tasks:
+
+  - name: Update the apt packages
+    shell: curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+
+  - name: Add source repository into sources list
+    ansible.builtin.apt_repository:
+      repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" 
+      state: present
+
+  - name: Create a directory if it does not exist
+    ansible.builtin.file:
+      path: /etc/apt/sources.list.d/helm-stable-debian.list
+      state: absent
+      mode: '0755'
+
+  - name: Add the kubernetes networking file
+    lineinfile:
+      dest: /etc/apt/sources.list.d/helm-stable-debian.list
+      regexp: '.*{{ item }}$'
+      line: "{{ item }}"
+      state: absent
+    loop:
+      - deb [arch=amd64 signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main
+
+
+  - name: Upgrade all packages on servers
+    apt: upgrade=dist force_apt_get=yes
+
+  - name: Install helm
+    ansible.builtin.apt:
+      name: "helm"
+      state: latest

@@ -9,6 +9,8 @@
     shell: "sudo kubeadm token create --print-join-command"
     register: join_worker_command
     when: inventory_hostname in groups['prox-k8s-control']
+  - debug:
+      msg: join_worker_command.stdout_lines[0]
 
   - name: Set the fact from control for workers
     set_fact:

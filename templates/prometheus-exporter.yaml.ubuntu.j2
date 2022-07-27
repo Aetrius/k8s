@@ -1,0 +1,35 @@
+exporter: 
+  # the exporter image
+  image: my/exporter
+  tag: latest
+  pullPolicy: IfNotPresent
+  # the exporter's listen port 
+  # eg: danielqsj/kafka-exporter has default port at 9308
+  port: 9100
+  # config the exporter with args or envs
+  args: []
+    # - --kafka.server=kafka:9092
+  env: []
+    # - FOO=bar
+
+service:
+  type: ClusterIP
+  clusterIP: ""
+  port: 80
+  
+# the serviceMonitor 
+serviceMonitor:
+  enabled: true
+  interval: 30s
+
+# the PrometheusRules
+prometheusRule:
+  enabled: true
+  # default PrometheusName of prometheus-operator is "k8s"
+  prometheusName: k8s 
+  rules: 
+  - alert: sample alert
+    expr: up > 0
+    labels:
+      severity: critical
+      runbookUrl: https://example.com

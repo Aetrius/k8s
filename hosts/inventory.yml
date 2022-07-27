@@ -4,19 +4,23 @@ all: # keys must be unique, i.e. only one 'hosts' per group
         prox-hosts:
             children:
                 prox-k8s-workers:
+                    vars:
+                        ansible_python_interpreter: /usr/bin/python3
                     hosts:
                         k8s-worker1:
-                            ansible_host: 192.168.1.44
+                            ansible_host: 192.168.1.67
                         k8s-worker2:
-                            ansible_host: 192.168.1.45
+                            ansible_host: 192.168.1.68
                         k8s-worker3:
-                            ansible_host: 192.168.1.46
+                            ansible_host: 192.168.1.71
                         k8s-worker4:
-                            ansible_host: 192.168.1.50
+                            ansible_host: 192.168.1.70
                 prox-k8s-control:
                     hosts:
                         k8s-control:
-                            ansible_host: 192.168.1.43
+                            ansible_host: 192.168.1.66
+                        k8s-control2:
+                            ansible_host: 192.168.1.69
 
                         # example-host:
                         #     ansible_host: 0.0.0.0
