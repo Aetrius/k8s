@@ -14,8 +14,6 @@ K8s
 ansible-playbook -i hosts/inventory.yml k8s/main.yml -Kk --extra-vars "target=all"
 
 
-#### https://www.linuxtechi.com/install-kubernetes-on-ubuntu-22-04/ doc source
-
 #RUN
 ansible-playbook -i hosts/inventory.yml k3ssetup.yml -Kk --extra-vars "target=prox-aether01"
 
